@@ -45,6 +45,10 @@ def recommend(movie_id, user_id, content, collab, top_n=10, alpha=0.5, pool_size
     candidate_ids = [movie for movie, _ in candidates]
     content_scores = [score for _, score in candidates]
 
+    if user_id is None or user_id not in collab["user_to_row"]:
+        top = candidates[:top_n]
+        return {"mode": "content", "recommendations": [(movie, float(score)) for movie, score in top]}
+
     user_scores = score_movies(
         user_id, collab["user_factors"], collab["movie_factors"], collab["user_to_row"]
     )
