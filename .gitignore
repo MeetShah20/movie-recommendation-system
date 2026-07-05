@@ -1,0 +1,31 @@
+# Planning notes (kept local)
+Movie_Recommendation_Plan.md
+Movie_Recommendation_Implementation_Plan.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# Data and generated artifacts
+backend/data/
+backend/precomputed/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Environment
+.env
+*.env
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
