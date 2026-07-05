@@ -2,6 +2,7 @@
 
 import pandas as pd
 from scipy.sparse import csr_matrix
+from sklearn.decomposition import TruncatedSVD
 
 
 def load_ratings(ratings_path, links_path):
@@ -31,3 +32,11 @@ def build_matrix(ratings, user_to_row, movie_to_col):
     cols = ratings["movie_id"].map(movie_to_col)
     shape = (len(user_to_row), len(movie_to_col))
     return csr_matrix((ratings["rating"], (rows, cols)), shape=shape)
+
+
+def fit_svd(matrix, n_components=50):
+    """Factorize the ratings matrix into latent user and movie factors."""
+    svd = TruncatedSVD(n_components=n_components, random_state=42)
+    user_factors = svd.fit_transform(matrix)
+    movie_factors = svd.components_.T
+    return user_factors, movie_factors
