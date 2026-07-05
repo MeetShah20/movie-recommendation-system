@@ -42,3 +42,25 @@ def load_keywords(path):
     keywords = pd.read_csv(path)
     keywords["keywords"] = keywords["keywords"].apply(parse_names)
     return keywords
+
+
+def parse_director(raw):
+    """Return the director's name from a stringified crew list, or '' if absent."""
+    if not isinstance(raw, str):
+        return ""
+    try:
+        crew = ast.literal_eval(raw)
+    except (ValueError, SyntaxError):
+        return ""
+    for member in crew:
+        if isinstance(member, dict) and member.get("job") == "Director":
+            return member.get("name", "")
+    return ""
+
+
+def load_credits(path, cast_size=3):
+    """Read credits.csv and keep the top-billed cast and the director per movie."""
+    credits = pd.read_csv(path)
+    credits["cast"] = credits["cast"].apply(lambda raw: parse_names(raw, limit=cast_size))
+    credits["director"] = credits["crew"].apply(parse_director)
+    return credits.drop(columns=["crew"])
