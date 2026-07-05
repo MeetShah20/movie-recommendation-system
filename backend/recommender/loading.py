@@ -35,3 +35,10 @@ def load_movies(path):
     movies["id"] = movies["id"].astype(int)
     movies["genres"] = movies["genres"].apply(parse_names)
     return movies
+
+
+def load_keywords(path):
+    """Read keywords.csv and parse the plot keywords for each movie."""
+    keywords = pd.read_csv(path)
+    keywords["keywords"] = keywords["keywords"].apply(parse_names)
+    return keywords
