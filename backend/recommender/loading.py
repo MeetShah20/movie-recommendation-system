@@ -64,3 +64,27 @@ def load_credits(path, cast_size=3):
     credits["cast"] = credits["cast"].apply(lambda raw: parse_names(raw, limit=cast_size))
     credits["director"] = credits["crew"].apply(parse_director)
     return credits.drop(columns=["crew"])
+
+
+def _as_list(value):
+    return value if isinstance(value, list) else []
+
+
+def build_movies(movies_path, keywords_path, credits_path):
+    """Join metadata, keywords and credits into one frame keyed by movie id.
+
+    Each source has a few duplicate ids, so they are de-duplicated before the
+    join to keep it one row per movie. Movies without a matching keyword or
+    credit row keep empty values rather than being dropped.
+    """
+    movies = load_movies(movies_path)[["id", "title", "overview", "genres"]]
+    movies = movies.dropna(subset=["title"]).drop_duplicates(subset="id")
+    keywords = load_keywords(keywords_path).drop_duplicates(subset="id")
+    credits = load_credits(credits_path).drop_duplicates(subset="id")
+
+    combined = movies.merge(keywords, on="id", how="left").merge(credits, on="id", how="left")
+    combined["overview"] = combined["overview"].fillna("")
+    combined["director"] = combined["director"].fillna("")
+    combined["keywords"] = combined["keywords"].apply(_as_list)
+    combined["cast"] = combined["cast"].apply(_as_list)
+    return combined.reset_index(drop=True)
