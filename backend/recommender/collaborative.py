@@ -1,5 +1,6 @@
 """Collaborative recommendations from user ratings via latent factors."""
 
+import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
@@ -40,3 +41,15 @@ def fit_svd(matrix, n_components=50):
     user_factors = svd.fit_transform(matrix)
     movie_factors = svd.components_.T
     return user_factors, movie_factors
+
+
+def score_movies(user_id, user_factors, movie_factors, user_to_row):
+    """Return the predicted latent score for every movie for one user.
+
+    The scores line up with the movie factor rows, i.e. the movie index order,
+    so a caller can map a position back to a movie id through the same index.
+    """
+    if user_id not in user_to_row:
+        raise KeyError(user_id)
+    return user_factors[user_to_row[user_id]] @ movie_factors.T
+
