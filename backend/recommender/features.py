@@ -23,3 +23,13 @@ def normalized_fields(movies):
     fields["director"] = movies["director"].apply(lambda name: name.lower().replace(" ", ""))
     fields["overview"] = movies["overview"].str.lower()
     return fields
+
+
+def build_metadata_soup(movies):
+    """Combine the normalized fields into one text column per movie for TF-IDF."""
+    fields = normalized_fields(movies)
+    soup = (
+        fields["genres"] + " " + fields["keywords"] + " " + fields["cast"]
+        + " " + fields["director"] + " " + fields["overview"]
+    )
+    return soup.str.replace(r"\s+", " ", regex=True).str.strip()
