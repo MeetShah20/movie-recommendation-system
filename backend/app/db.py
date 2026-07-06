@@ -30,8 +30,17 @@ class Movie(Base):
     imdb_id = Column(String, default="")
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, nullable=False, index=True)
+    name = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)
+
+
 def init_db():
-    """Create the catalog table if it does not exist yet."""
+    """Create the tables if they do not exist yet."""
     Base.metadata.create_all(engine)
 
 
