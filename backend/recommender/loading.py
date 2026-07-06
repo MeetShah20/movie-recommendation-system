@@ -58,11 +58,28 @@ def parse_director(raw):
     return ""
 
 
+def parse_producers(raw, limit=2):
+    """Return up to `limit` producer names from a stringified crew list."""
+    if not isinstance(raw, str):
+        return []
+    try:
+        crew = ast.literal_eval(raw)
+    except (ValueError, SyntaxError):
+        return []
+    names = [
+        member["name"]
+        for member in crew
+        if isinstance(member, dict) and member.get("job") == "Producer" and "name" in member
+    ]
+    return names[:limit]
+
+
 def load_credits(path, cast_size=3):
-    """Read credits.csv and keep the top-billed cast and the director per movie."""
+    """Read credits.csv and keep the top-billed cast, director and producers per movie."""
     credits = pd.read_csv(path)
     credits["cast"] = credits["cast"].apply(lambda raw: parse_names(raw, limit=cast_size))
     credits["director"] = credits["crew"].apply(parse_director)
+    credits["producers"] = credits["crew"].apply(parse_producers)
     return credits.drop(columns=["crew"])
 
 
@@ -87,5 +104,6 @@ def build_movies(movies_path, keywords_path, credits_path):
     combined["director"] = combined["director"].fillna("")
     combined["keywords"] = combined["keywords"].apply(_as_list)
     combined["cast"] = combined["cast"].apply(_as_list)
+    combined["producers"] = combined["producers"].apply(_as_list)
     combined["year"] = pd.to_datetime(combined["release_date"], errors="coerce").dt.year.astype("Int64")
     return combined.drop(columns=["release_date"]).reset_index(drop=True)
