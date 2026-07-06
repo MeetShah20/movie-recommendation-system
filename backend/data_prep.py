@@ -2,6 +2,9 @@
 
 from pathlib import Path
 
+import numpy as np
+from scipy.sparse import save_npz
+
 from recommender.loading import build_movies
 from recommender.features import build_metadata_soup
 from recommender.content_based import fit_tfidf, build_id_index
@@ -36,3 +39,30 @@ def build(data_dir=DATA_DIR):
         "movie_to_col": movie_to_col,
     }
     return content, collab, movies
+
+
+def _ordered_ids(index):
+    """Return the ids of an index in matrix-position order."""
+    return np.array(sorted(index, key=index.get))
+
+
+def save_artifacts(content, collab, out_dir=ARTIFACTS_DIR):
+    """Write the fitted artifacts to disk for the API to load at startup."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    save_npz(out_dir / "tfidf_matrix.npz", content["matrix"])
+    np.save(out_dir / "content_ids.npy", np.array(content["row_to_id"]))
+    np.save(out_dir / "user_factors.npy", collab["user_factors"])
+    np.save(out_dir / "movie_factors.npy", collab["movie_factors"])
+    np.save(out_dir / "user_ids.npy", _ordered_ids(collab["user_to_row"]))
+    np.save(out_dir / "collab_movie_ids.npy", _ordered_ids(collab["movie_to_col"]))
+
+
+def main():
+    content, collab, movies = build()
+    save_artifacts(content, collab)
+    print(f"wrote artifacts to {ARTIFACTS_DIR}")
+
+
+if __name__ == "__main__":
+    main()
