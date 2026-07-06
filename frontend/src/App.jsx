@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import MovieSelectForm from "./components/MovieSelectForm.jsx";
+import ResultsList from "./components/ResultsList.jsx";
 import { fetchRecommendations } from "./api/client.js";
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
       <MovieSelectForm onSubmit={setRequest} />
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
+      {!loading && !error && <ResultsList result={result} />}
     </main>
   );
 }

@@ -1,0 +1,19 @@
+export default function ResultsList({ result }) {
+  if (!result) {
+    return null;
+  }
+
+  return (
+    <section>
+      <h2>Recommendations for {result.input_movie}</h2>
+      <ol>
+        {result.recommendations.map((movie) => (
+          <li key={movie.movie_id}>
+            <span>{movie.title}</span>
+            <span>{movie.score.toFixed(2)}</span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
