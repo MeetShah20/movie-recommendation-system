@@ -10,6 +10,8 @@ class MovieSummary(BaseModel):
     title: str
     genres: str
     year: int | None = None
+    poster_path: str = ""
+    vote_average: float | None = None
 
 
 class Recommendation(BaseModel):
@@ -39,3 +41,8 @@ class MovieDetail(BaseModel):
     vote_count: int | None = None
     poster_path: str
     imdb_url: str
+
+
+class HomeRow(BaseModel):
+    genre: str
+    movies: list[MovieSummary]
