@@ -14,6 +14,7 @@ env/
 # Data and generated artifacts
 backend/data/
 backend/precomputed/
+*.db
 
 # Node
 node_modules/
