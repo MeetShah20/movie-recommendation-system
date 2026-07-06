@@ -1,8 +1,18 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
+from app.models_store import get_models
 from app.routes import movies
 
-app = FastAPI(title="Movie Recommender")
+
+@asynccontextmanager
+async def lifespan(app):
+    get_models()
+    yield
+
+
+app = FastAPI(title="Movie Recommender", lifespan=lifespan)
 app.include_router(movies.router)
 
 
