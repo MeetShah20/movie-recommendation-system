@@ -58,9 +58,17 @@ def save_artifacts(content, collab, out_dir=ARTIFACTS_DIR):
     np.save(out_dir / "collab_movie_ids.npy", _ordered_ids(collab["movie_to_col"]))
 
 
+def save_catalog(movies, out_dir=ARTIFACTS_DIR):
+    """Write the slim movie catalog used to seed the database."""
+    catalog = movies[["id", "title", "genres", "year"]].copy()
+    catalog["genres"] = catalog["genres"].apply(lambda names: ", ".join(names))
+    catalog.to_csv(Path(out_dir) / "catalog.csv", index=False)
+
+
 def main():
     content, collab, movies = build()
     save_artifacts(content, collab)
+    save_catalog(movies)
     print(f"wrote artifacts to {ARTIFACTS_DIR}")
 
 

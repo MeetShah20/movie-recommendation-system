@@ -77,7 +77,7 @@ def build_movies(movies_path, keywords_path, credits_path):
     join to keep it one row per movie. Movies without a matching keyword or
     credit row keep empty values rather than being dropped.
     """
-    movies = load_movies(movies_path)[["id", "title", "overview", "genres"]]
+    movies = load_movies(movies_path)[["id", "title", "overview", "genres", "release_date"]]
     movies = movies.dropna(subset=["title"]).drop_duplicates(subset="id")
     keywords = load_keywords(keywords_path).drop_duplicates(subset="id")
     credits = load_credits(credits_path).drop_duplicates(subset="id")
@@ -87,4 +87,5 @@ def build_movies(movies_path, keywords_path, credits_path):
     combined["director"] = combined["director"].fillna("")
     combined["keywords"] = combined["keywords"].apply(_as_list)
     combined["cast"] = combined["cast"].apply(_as_list)
-    return combined.reset_index(drop=True)
+    combined["year"] = pd.to_datetime(combined["release_date"], errors="coerce").dt.year.astype("Int64")
+    return combined.drop(columns=["release_date"]).reset_index(drop=True)
