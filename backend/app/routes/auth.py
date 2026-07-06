@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db import User, get_db
-from app.schemas import RegisterRequest, UserOut
-from app.security import hash_password
+from app.schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut
+from app.security import create_access_token, hash_password, verify_password
 
 router = APIRouter()
 
@@ -24,3 +24,12 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.post("/login", response_model=TokenResponse)
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
+    """Check credentials and return an access token."""
+    user = db.query(User).filter(User.username == payload.username).first()
+    if user is None or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="invalid username or password")
+    return TokenResponse(access_token=create_access_token(user.id))

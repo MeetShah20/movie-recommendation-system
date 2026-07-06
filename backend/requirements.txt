@@ -6,3 +6,4 @@ scikit-learn==1.5.1
 scipy==1.18.0
 pytest==8.3.2
 bcrypt==5.0.0
+PyJWT==2.13.0
