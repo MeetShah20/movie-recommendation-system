@@ -46,3 +46,17 @@ class MovieDetail(BaseModel):
 class HomeRow(BaseModel):
     genre: str
     movies: list[MovieSummary]
+
+
+class RegisterRequest(BaseModel):
+    username: str
+    name: str
+    password: str
+
+
+class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    username: str
+    name: str

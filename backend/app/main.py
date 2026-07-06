@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import ALLOWED_ORIGINS
 from app.models_store import get_models
-from app.routes import home, movies, recommend
+from app.routes import auth, home, movies, recommend
 
 
 @asynccontextmanager
@@ -24,6 +24,7 @@ app.add_middleware(
 app.include_router(movies.router)
 app.include_router(recommend.router)
 app.include_router(home.router)
+app.include_router(auth.router)
 
 
 @app.get("/health")
