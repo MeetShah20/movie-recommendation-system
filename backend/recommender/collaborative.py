@@ -1,9 +1,11 @@
 """Collaborative recommendations from user ratings via latent factors."""
 
 import numpy as np
+import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 from sklearn.decomposition import TruncatedSVD
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 def load_ratings(ratings_path, links_path):
@@ -65,4 +67,20 @@ def score_for_users(user_ids, user_factors, movie_factors, user_to_row):
         return None
     profile = user_factors[rows].mean(axis=0)
     return profile @ movie_factors.T
+
+
+def also_watched(movie_id, movie_factors, movie_to_col, col_to_movie, top_n=20):
+    """Return movies closest to this one in rating space (watchers of X also watched)."""
+    if movie_id not in movie_to_col:
+        return []
+    col = movie_to_col[movie_id]
+    scores = cosine_similarity(movie_factors[col].reshape(1, -1), movie_factors).ravel()
+    results = []
+    for index in np.argsort(scores)[::-1]:
+        if index == col:
+            continue
+        results.append((int(col_to_movie[index]), float(scores[index])))
+        if len(results) == top_n:
+            break
+    return results
 
