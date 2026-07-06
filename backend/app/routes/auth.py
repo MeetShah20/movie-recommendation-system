@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db import User, get_db
+from app.dependencies import get_current_user
 from app.schemas import LoginRequest, RegisterRequest, TokenResponse, UserOut
 from app.security import create_access_token, hash_password, verify_password
 
@@ -33,3 +34,9 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     if user is None or not verify_password(payload.password, user.password_hash):
         raise HTTPException(status_code=401, detail="invalid username or password")
     return TokenResponse(access_token=create_access_token(user.id))
+
+
+@router.get("/me", response_model=UserOut)
+def me(user: User = Depends(get_current_user)):
+    """Return the currently signed-in user."""
+    return user
