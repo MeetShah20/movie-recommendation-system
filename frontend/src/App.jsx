@@ -23,7 +23,7 @@ export default function App() {
   }, [request]);
 
   return (
-    <main>
+    <main className="app">
       <h1>Movie Recommender</h1>
       <MovieSelectForm onSubmit={setRequest} />
       {loading && <p>Loading...</p>}

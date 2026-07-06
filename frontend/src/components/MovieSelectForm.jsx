@@ -36,8 +36,8 @@ export default function MovieSelectForm({ onSubmit }) {
   }
 
   return (
-    <form onSubmit={submit}>
-      <div>
+    <form className="form" onSubmit={submit}>
+      <div className="field">
         <label htmlFor="movie-search">Movie</label>
         <input
           id="movie-search"
@@ -50,10 +50,10 @@ export default function MovieSelectForm({ onSubmit }) {
           autoComplete="off"
         />
         {matches.length > 0 && (
-          <ul>
+          <ul className="matches">
             {matches.map((movie) => (
               <li key={movie.id}>
-                <button type="button" onClick={() => choose(movie)}>
+                <button type="button" className="match" onClick={() => choose(movie)}>
                   {movie.title}
                   {movie.year ? ` (${movie.year})` : ""}
                 </button>
@@ -62,7 +62,7 @@ export default function MovieSelectForm({ onSubmit }) {
           </ul>
         )}
       </div>
-      <div>
+      <div className="field">
         <label htmlFor="user-id">User id (optional)</label>
         <input
           id="user-id"
@@ -72,7 +72,7 @@ export default function MovieSelectForm({ onSubmit }) {
           placeholder="e.g. 1"
         />
       </div>
-      <button type="submit" disabled={!selected}>
+      <button type="submit" className="submit" disabled={!selected}>
         Get recommendations
       </button>
     </form>
