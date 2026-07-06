@@ -1,5 +1,6 @@
 """Load the precomputed recommender artifacts from disk."""
 
+import pickle
 from pathlib import Path
 
 import numpy as np
@@ -15,7 +16,10 @@ def load_artifacts(directory):
     """Read the persisted artifacts and rebuild the content and collab structures."""
     directory = Path(directory)
     content_ids = [int(i) for i in np.load(directory / "content_ids.npy")]
+    with open(directory / "vectorizer.pkl", "rb") as handle:
+        vectorizer = pickle.load(handle)
     content = {
+        "vectorizer": vectorizer,
         "matrix": load_npz(directory / "tfidf_matrix.npz"),
         "id_to_row": _index_from_ids(content_ids),
         "row_to_id": content_ids,

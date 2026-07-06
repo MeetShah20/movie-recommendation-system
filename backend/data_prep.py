@@ -1,5 +1,6 @@
 """Build the recommender artifacts once, ready to be written to disk."""
 
+import pickle
 from pathlib import Path
 
 import numpy as np
@@ -24,9 +25,14 @@ def build(data_dir=DATA_DIR):
         str(data_dir / "credits.csv"),
     )
     soup = build_metadata_soup(movies)
-    _, matrix = fit_tfidf(soup)
+    vectorizer, matrix = fit_tfidf(soup)
     id_to_row, row_to_id = build_id_index(movies["id"])
-    content = {"matrix": matrix, "id_to_row": id_to_row, "row_to_id": row_to_id}
+    content = {
+        "vectorizer": vectorizer,
+        "matrix": matrix,
+        "id_to_row": id_to_row,
+        "row_to_id": row_to_id,
+    }
 
     ratings = load_ratings(str(data_dir / "ratings_small.csv"), str(data_dir / "links.csv"))
     user_to_row, _ = build_index(ratings["userId"])
@@ -51,6 +57,8 @@ def save_artifacts(content, collab, out_dir=ARTIFACTS_DIR):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     save_npz(out_dir / "tfidf_matrix.npz", content["matrix"])
+    with open(out_dir / "vectorizer.pkl", "wb") as handle:
+        pickle.dump(content["vectorizer"], handle)
     np.save(out_dir / "content_ids.npy", np.array(content["row_to_id"]))
     np.save(out_dir / "user_factors.npy", collab["user_factors"])
     np.save(out_dir / "movie_factors.npy", collab["movie_factors"])
