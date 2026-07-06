@@ -1,6 +1,6 @@
 """Database engine, session factory, and the movie catalog table."""
 
-from sqlalchemy import Column, Float, Integer, String, create_engine
+from sqlalchemy import Column, Float, Integer, String, UniqueConstraint, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .config import DATABASE_URL
@@ -45,6 +45,16 @@ class Profile(Base):
     id = Column(Integer, primary_key=True)
     movielens_id = Column(Integer, unique=True, nullable=False, index=True)
     name = Column(String, nullable=False)
+
+
+class Friendship(Base):
+    __tablename__ = "friendships"
+    __table_args__ = (UniqueConstraint("owner_id", "friend_kind", "friend_id", name="uq_friendship"),)
+
+    id = Column(Integer, primary_key=True)
+    owner_id = Column(Integer, nullable=False, index=True)
+    friend_kind = Column(String, nullable=False)
+    friend_id = Column(Integer, nullable=False)
 
 
 def init_db():
