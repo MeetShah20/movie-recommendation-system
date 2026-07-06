@@ -39,3 +39,11 @@ def similar_movies(movie_id, matrix, id_to_row, row_to_id, top_n=10):
         if len(results) == top_n:
             break
     return results
+
+
+def query_movies(text, vectorizer, matrix, row_to_id, top_n=10):
+    """Return the top_n movies whose metadata best matches a free-text query."""
+    vector = vectorizer.transform([text])
+    scores = cosine_similarity(vector, matrix).ravel()
+    ranked = np.argsort(scores)[::-1][:top_n]
+    return [(int(row_to_id[index]), float(scores[index])) for index in ranked]
