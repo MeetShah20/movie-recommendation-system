@@ -39,6 +39,14 @@ class User(Base):
     password_hash = Column(String, nullable=False)
 
 
+class Profile(Base):
+    __tablename__ = "profiles"
+
+    id = Column(Integer, primary_key=True)
+    movielens_id = Column(Integer, unique=True, nullable=False, index=True)
+    name = Column(String, nullable=False)
+
+
 def init_db():
     """Create the tables if they do not exist yet."""
     Base.metadata.create_all(engine)
