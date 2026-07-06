@@ -26,8 +26,8 @@ export default function App() {
     <main className="app">
       <h1>Movie Recommender</h1>
       <MovieSelectForm onSubmit={setRequest} />
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {loading && <p className="status">Loading...</p>}
+      {error && <p className="status error">{error}</p>}
       {!loading && !error && <ResultsList result={result} />}
     </main>
   );

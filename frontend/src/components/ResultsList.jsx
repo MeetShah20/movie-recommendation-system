@@ -4,18 +4,18 @@ export default function ResultsList({ result }) {
   }
 
   if (result.recommendations.length === 0) {
-    return <p>No recommendations found for this movie.</p>;
+    return <p className="status">No recommendations found for this movie.</p>;
   }
 
   return (
-    <section>
+    <section className="results">
       <h2>Recommendations for {result.input_movie}</h2>
-      <p>Recommendation mode: {result.mode_used}</p>
-      <ol>
+      <p className="mode">Recommendation mode: {result.mode_used}</p>
+      <ol className="result-list">
         {result.recommendations.map((movie) => (
-          <li key={movie.movie_id}>
-            <span>{movie.title}</span>
-            <span>{movie.score.toFixed(2)}</span>
+          <li key={movie.movie_id} className="result">
+            <span className="title">{movie.title}</span>
+            <span className="score">{movie.score.toFixed(2)}</span>
           </li>
         ))}
       </ol>

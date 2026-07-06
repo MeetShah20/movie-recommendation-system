@@ -97,3 +97,54 @@ body {
   background: #b8c4e6;
   cursor: not-allowed;
 }
+
+.status {
+  margin-top: 1.25rem;
+  color: #555555;
+}
+
+.status.error {
+  color: #c0392b;
+}
+
+.results {
+  margin-top: 1.75rem;
+}
+
+.results h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.25rem;
+}
+
+.mode {
+  color: #666666;
+  font-size: 0.85rem;
+  margin: 0 0 1rem;
+}
+
+.result-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e2e6;
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.result .title {
+  font-weight: 500;
+}
+
+.result .score {
+  color: #3b6ef2;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
