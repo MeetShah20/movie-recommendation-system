@@ -1,6 +1,9 @@
 """Multi-signal recommendation engine: combine several inputs into one ranked list with reasons."""
 
+import numpy as np
+
 from app.db import Movie
+from recommender.collaborative import also_watched, score_for_users
 from recommender.content_based import query_movies, similar_movies
 
 POOL_SIZE = 60
@@ -46,6 +49,29 @@ def _from_column(pool, db, column, value, signal, reason):
         _add(pool, movie.id, signal, (movie.vote_average or 0.0) / 10.0, reason)
 
 
+def _from_friends(pool, collab, col_to_movie, friend_ids, top_k=40):
+    scores = score_for_users(
+        friend_ids, collab["user_factors"], collab["movie_factors"], collab["user_to_row"]
+    )
+    if scores is None:
+        return
+    for index in np.argsort(scores)[::-1][:top_k]:
+        if scores[index] <= 0:
+            break
+        _add(pool, int(col_to_movie[index]), "friends", float(scores[index]), "Liked by your friends")
+
+
+def _from_also_watched(pool, db, collab, col_to_movie, movie_id):
+    seed = db.get(Movie, movie_id)
+    if seed is None:
+        return
+    neighbours = also_watched(
+        movie_id, collab["movie_factors"], collab["movie_to_col"], col_to_movie, top_n=30
+    )
+    for candidate_id, score in neighbours:
+        _add(pool, candidate_id, "watched", score, f"People who watched {seed.title} also watched this")
+
+
 def _rank(pool, db, min_rating, top_n):
     if not pool:
         return []
@@ -65,11 +91,13 @@ def _rank(pool, db, min_rating, top_n):
     return ranked[:top_n]
 
 
-def recommend(db, content, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, top_n=12):
+def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, friend_ids=None, top_n=12):
     """Build a ranked, reason-tagged recommendation list from any mix of inputs."""
     pool = {}
+    col_to_movie = {position: movie_id_ for movie_id_, position in collab["movie_to_col"].items()}
     if movie_id is not None:
         _from_movie(pool, db, content, movie_id)
+        _from_also_watched(pool, db, collab, col_to_movie, movie_id)
     if text:
         _from_text(pool, content, text)
     for genre in genres or []:
@@ -78,4 +106,6 @@ def recommend(db, content, *, movie_id=None, text="", genres=None, cast="", dire
         _from_column(pool, db, Movie.cast, cast, "cast", f"Features {cast}")
     if director:
         _from_column(pool, db, Movie.director, director, "director", f"Directed by {director}")
+    if friend_ids:
+        _from_friends(pool, collab, col_to_movie, friend_ids)
     return _rank(pool, db, min_rating, top_n)
