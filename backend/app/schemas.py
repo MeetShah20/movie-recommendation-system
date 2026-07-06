@@ -76,3 +76,8 @@ class Person(BaseModel):
     kind: str
     id: int
     name: str
+
+
+class AddFriendRequest(BaseModel):
+    kind: str
+    id: int
