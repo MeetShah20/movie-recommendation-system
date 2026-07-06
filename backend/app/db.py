@@ -1,6 +1,6 @@
 """Database engine, session factory, and the movie catalog table."""
 
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Float, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from .config import DATABASE_URL
@@ -18,6 +18,16 @@ class Movie(Base):
     title = Column(String, nullable=False)
     genres = Column(String, default="")
     year = Column(Integer)
+    overview = Column(String, default="")
+    tagline = Column(String, default="")
+    cast = Column(String, default="")
+    director = Column(String, default="")
+    producers = Column(String, default="")
+    runtime = Column(Integer)
+    vote_average = Column(Float)
+    vote_count = Column(Integer)
+    poster_path = Column(String, default="")
+    imdb_id = Column(String, default="")
 
 
 def init_db():
