@@ -56,19 +56,6 @@ def score_movies(user_id, user_factors, movie_factors, user_to_row):
     return user_factors[user_to_row[user_id]] @ movie_factors.T
 
 
-def score_for_users(user_ids, user_factors, movie_factors, user_to_row):
-    """Score every movie from the averaged latent profile of several users.
-
-    Returns a per-movie score vector aligned to the movie factor rows, or None
-    when none of the given users are known to the model.
-    """
-    rows = [user_to_row[user_id] for user_id in user_ids if user_id in user_to_row]
-    if not rows:
-        return None
-    profile = user_factors[rows].mean(axis=0)
-    return profile @ movie_factors.T
-
-
 def also_watched(movie_id, movie_factors, movie_to_col, col_to_movie, top_n=20):
     """Return movies closest to this one in rating space (watchers of X also watched)."""
     if movie_id not in movie_to_col:

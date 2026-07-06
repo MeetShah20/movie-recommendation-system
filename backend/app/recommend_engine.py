@@ -3,7 +3,7 @@
 import numpy as np
 
 from app.db import Movie
-from recommender.collaborative import also_watched, score_for_users
+from recommender.collaborative import also_watched
 from recommender.content_based import query_movies, similar_movies
 
 POOL_SIZE = 60
@@ -49,16 +49,36 @@ def _from_column(pool, db, column, value, signal, reason):
         _add(pool, movie.id, signal, (movie.vote_average or 0.0) / 10.0, reason)
 
 
-def _from_friends(pool, collab, col_to_movie, friend_ids, top_k=40):
-    scores = score_for_users(
-        friend_ids, collab["user_factors"], collab["movie_factors"], collab["user_to_row"]
-    )
-    if scores is None:
-        return
-    for index in np.argsort(scores)[::-1][:top_k]:
-        if scores[index] <= 0:
-            break
-        _add(pool, int(col_to_movie[index]), "friends", float(scores[index]), "Liked by your friends")
+def _friends_reason(names):
+    """Phrase who recommended a movie, listing up to three friends then a '+'."""
+    if len(names) == 1:
+        return f"Recommended by {names[0]}"
+    if len(names) == 2:
+        return f"Recommended by {names[0]} and {names[1]}"
+    if len(names) == 3:
+        return f"Recommended by {names[0]}, {names[1]}, {names[2]}"
+    return f"Recommended by {names[0]}, {names[1]}, {names[2]} +"
+
+
+def _from_friends(pool, collab, col_to_movie, friends, per_friend=30):
+    """Add each friend's top picks, naming who recommends each movie."""
+    user_to_row = collab["user_to_row"]
+    user_factors = collab["user_factors"]
+    movie_factors = collab["movie_factors"]
+    recommenders = {}
+    for movielens_id, name in friends.items():
+        if movielens_id not in user_to_row:
+            continue
+        scores = user_factors[user_to_row[movielens_id]] @ movie_factors.T
+        for index in np.argsort(scores)[::-1][:per_friend]:
+            if scores[index] <= 0:
+                break
+            recommenders.setdefault(int(col_to_movie[index]), []).append((name, float(scores[index])))
+    for movie_id, backers in recommenders.items():
+        backers.sort(key=lambda item: item[1], reverse=True)
+        names = [name for name, _ in backers]
+        strength = len(backers) + sum(score for _, score in backers) * 0.001
+        _add(pool, movie_id, "friends", strength, _friends_reason(names))
 
 
 def _from_also_watched(pool, db, collab, col_to_movie, movie_id):
@@ -91,7 +111,7 @@ def _rank(pool, db, min_rating, top_n):
     return ranked[:top_n]
 
 
-def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, friend_ids=None, top_n=12):
+def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, friends=None, top_n=12):
     """Build a ranked, reason-tagged recommendation list from any mix of inputs."""
     pool = {}
     col_to_movie = {position: movie_id_ for movie_id_, position in collab["movie_to_col"].items()}
@@ -106,6 +126,6 @@ def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast=
         _from_column(pool, db, Movie.cast, cast, "cast", f"Features {cast}")
     if director:
         _from_column(pool, db, Movie.director, director, "director", f"Directed by {director}")
-    if friend_ids:
-        _from_friends(pool, collab, col_to_movie, friend_ids)
+    if friends:
+        _from_friends(pool, collab, col_to_movie, friends)
     return _rank(pool, db, min_rating, top_n)
