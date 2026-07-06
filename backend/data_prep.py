@@ -59,9 +59,15 @@ def save_artifacts(content, collab, out_dir=ARTIFACTS_DIR):
 
 
 def save_catalog(movies, out_dir=ARTIFACTS_DIR):
-    """Write the slim movie catalog used to seed the database."""
-    catalog = movies[["id", "title", "genres", "year"]].copy()
-    catalog["genres"] = catalog["genres"].apply(lambda names: ", ".join(names))
+    """Write the movie catalog used to seed the database."""
+    columns = [
+        "id", "title", "year", "genres", "overview", "tagline",
+        "cast", "director", "producers", "runtime",
+        "vote_average", "vote_count", "poster_path", "imdb_id",
+    ]
+    catalog = movies[columns].copy()
+    for column in ["genres", "cast", "producers"]:
+        catalog[column] = catalog[column].apply(lambda names: ", ".join(names))
     catalog.to_csv(Path(out_dir) / "catalog.csv", index=False)
 
 

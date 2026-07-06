@@ -94,7 +94,11 @@ def build_movies(movies_path, keywords_path, credits_path):
     join to keep it one row per movie. Movies without a matching keyword or
     credit row keep empty values rather than being dropped.
     """
-    movies = load_movies(movies_path)[["id", "title", "overview", "genres", "release_date"]]
+    columns = [
+        "id", "title", "overview", "genres", "release_date",
+        "poster_path", "tagline", "runtime", "vote_average", "vote_count", "imdb_id",
+    ]
+    movies = load_movies(movies_path)[columns]
     movies = movies.dropna(subset=["title"]).drop_duplicates(subset="id")
     keywords = load_keywords(keywords_path).drop_duplicates(subset="id")
     credits = load_credits(credits_path).drop_duplicates(subset="id")
@@ -102,6 +106,12 @@ def build_movies(movies_path, keywords_path, credits_path):
     combined = movies.merge(keywords, on="id", how="left").merge(credits, on="id", how="left")
     combined["overview"] = combined["overview"].fillna("")
     combined["director"] = combined["director"].fillna("")
+    combined["tagline"] = combined["tagline"].fillna("")
+    combined["poster_path"] = combined["poster_path"].fillna("")
+    combined["imdb_id"] = combined["imdb_id"].fillna("")
+    combined["runtime"] = combined["runtime"].fillna(0)
+    combined["vote_average"] = combined["vote_average"].fillna(0.0)
+    combined["vote_count"] = combined["vote_count"].fillna(0)
     combined["keywords"] = combined["keywords"].apply(_as_list)
     combined["cast"] = combined["cast"].apply(_as_list)
     combined["producers"] = combined["producers"].apply(_as_list)
