@@ -23,3 +23,12 @@ class Movie(Base):
 def init_db():
     """Create the catalog table if it does not exist yet."""
     Base.metadata.create_all(engine)
+
+
+def get_db():
+    """Yield a database session and close it afterwards."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
