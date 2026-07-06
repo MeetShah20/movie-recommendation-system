@@ -53,3 +53,16 @@ def score_movies(user_id, user_factors, movie_factors, user_to_row):
         raise KeyError(user_id)
     return user_factors[user_to_row[user_id]] @ movie_factors.T
 
+
+def score_for_users(user_ids, user_factors, movie_factors, user_to_row):
+    """Score every movie from the averaged latent profile of several users.
+
+    Returns a per-movie score vector aligned to the movie factor rows, or None
+    when none of the given users are known to the model.
+    """
+    rows = [user_to_row[user_id] for user_id in user_ids if user_id in user_to_row]
+    if not rows:
+        return None
+    profile = user_factors[rows].mean(axis=0)
+    return profile @ movie_factors.T
+
