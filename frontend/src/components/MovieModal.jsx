@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { fetchMovie } from "../api/client.js";
 
@@ -14,8 +15,14 @@ function runtimeLabel(minutes) {
 }
 
 export default function MovieModal({ movieId, onClose }) {
+  const navigate = useNavigate();
   const [movie, setMovie] = useState(null);
   const [error, setError] = useState(null);
+
+  function recommendFromHere() {
+    onClose();
+    navigate(`/recommend?movie=${movieId}`);
+  }
 
   useEffect(() => {
     setMovie(null);
@@ -83,11 +90,16 @@ export default function MovieModal({ movieId, onClose }) {
                   <span>Producers</span> {movie.producers}
                 </p>
               )}
-              {movie.imdb_url && (
-                <a className="modal-imdb" href={movie.imdb_url} target="_blank" rel="noreferrer">
-                  View on IMDb
-                </a>
-              )}
+              <div className="modal-actions">
+                <button className="submit" type="button" onClick={recommendFromHere}>
+                  Recommend similar
+                </button>
+                {movie.imdb_url && (
+                  <a className="modal-imdb" href={movie.imdb_url} target="_blank" rel="noreferrer">
+                    View on IMDb
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         )}
