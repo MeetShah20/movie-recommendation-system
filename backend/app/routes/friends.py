@@ -81,3 +81,18 @@ def add_friend(
         _link(db, payload.id, "user", user.id)
     db.commit()
     return _friends_of(db, user.id)
+
+
+@router.delete("/friends/{kind}/{friend_id}", response_model=list[Person])
+def remove_friend(
+    kind: str,
+    friend_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Remove a friend, dropping the link on both sides for member friendships."""
+    db.query(Friendship).filter_by(owner_id=user.id, friend_kind=kind, friend_id=friend_id).delete()
+    if kind == "user":
+        db.query(Friendship).filter_by(owner_id=friend_id, friend_kind="user", friend_id=user.id).delete()
+    db.commit()
+    return _friends_of(db, user.id)
