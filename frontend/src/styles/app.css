@@ -64,6 +64,19 @@ body {
   gap: 0.9rem;
 }
 
+.nav-heart {
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nav-heart:hover,
+.nav-heart.active {
+  color: var(--accent);
+}
+
 .nav-user {
   color: var(--text);
   font-size: 0.95rem;

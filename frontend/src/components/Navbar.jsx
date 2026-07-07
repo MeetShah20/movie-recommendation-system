@@ -39,6 +39,14 @@ export default function Navbar() {
       <div className="nav-account">
         {user ? (
           <>
+            <NavLink
+              to="/likes"
+              className={({ isActive }) => (isActive ? "nav-heart active" : "nav-heart")}
+              aria-label="Liked movies"
+              title="Liked movies"
+            >
+              ♥
+            </NavLink>
             <span className="nav-user">{user.name}</span>
             <button className="nav-logout" type="button" onClick={logout}>
               Log out
