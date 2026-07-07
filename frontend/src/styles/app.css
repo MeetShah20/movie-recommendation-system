@@ -586,6 +586,12 @@ body {
   flex: 1 1 180px;
 }
 
+.field-hint {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

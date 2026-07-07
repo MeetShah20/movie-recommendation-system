@@ -3,7 +3,8 @@ import { useSearchParams } from "react-router-dom";
 
 import MovieModal from "../components/MovieModal.jsx";
 import PosterCard from "../components/PosterCard.jsx";
-import { recommend } from "../api/client.js";
+import { fetchFriends, recommend } from "../api/client.js";
+import { useAuth } from "../auth/AuthContext.jsx";
 
 const GENRES = [
   "Action",
@@ -28,6 +29,7 @@ const RATINGS = [
 ];
 
 export default function Recommend() {
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const seedMovie = searchParams.get("movie");
 
@@ -35,15 +37,34 @@ export default function Recommend() {
   const [cast, setCast] = useState("");
   const [director, setDirector] = useState("");
   const [minRating, setMinRating] = useState(0);
+  const [friends, setFriends] = useState([]);
+  const [selectedFriends, setSelectedFriends] = useState([]);
 
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
 
+  useEffect(() => {
+    if (!user) {
+      setFriends([]);
+      setSelectedFriends([]);
+      return;
+    }
+    fetchFriends()
+      .then((all) => setFriends(all.filter((friend) => friend.kind === "profile")))
+      .catch(() => setFriends([]));
+  }, [user]);
+
   function toggleGenre(genre) {
     setGenres((current) =>
       current.includes(genre) ? current.filter((g) => g !== genre) : [...current, genre]
+    );
+  }
+
+  function toggleFriend(id) {
+    setSelectedFriends((current) =>
+      current.includes(id) ? current.filter((f) => f !== id) : [...current, id]
     );
   }
 
@@ -56,6 +77,7 @@ export default function Recommend() {
         cast: cast.trim(),
         director: director.trim(),
         min_rating: minRating,
+        people: selectedFriends,
         ...extra,
       };
       const data = await recommend(payload);
@@ -134,6 +156,27 @@ export default function Recommend() {
             </select>
           </div>
         </div>
+        {user && (
+          <div className="field">
+            <label>Friends</label>
+            {friends.length === 0 ? (
+              <p className="field-hint">Add viewers from Settings to see what they would recommend.</p>
+            ) : (
+              <div className="chips">
+                {friends.map((friend) => (
+                  <button
+                    key={friend.id}
+                    type="button"
+                    className={selectedFriends.includes(friend.id) ? "chip active" : "chip"}
+                    onClick={() => toggleFriend(friend.id)}
+                  >
+                    {friend.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         <button className="submit" type="submit" disabled={loading}>
           {loading ? "Finding..." : "Get recommendations"}
         </button>
