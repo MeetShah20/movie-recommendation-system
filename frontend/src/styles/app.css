@@ -586,6 +586,23 @@ body {
   flex: 1 1 180px;
 }
 
+.search-box {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.9rem;
+  background: #0f0f0f;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-box:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .mood-box {
   padding: 0.6rem 0.7rem;
   background: #0f0f0f;
