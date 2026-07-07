@@ -17,7 +17,10 @@ export default function PosterCard({ movie, onClick }) {
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className="poster-fallback">{movie.title}</span>
+        <span className="poster-fallback">
+          <span className="poster-fallback-title">{movie.title}</span>
+          {movie.year && <span className="poster-fallback-year">{movie.year}</span>}
+        </span>
       )}
     </button>
   );
