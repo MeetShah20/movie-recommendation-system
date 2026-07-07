@@ -41,12 +41,8 @@ export function searchMovies(query) {
   return request(`/movies?${params}`);
 }
 
-export function fetchRecommendations({ movieId, userId, topN = 10 }) {
-  const params = new URLSearchParams({ movie_id: movieId, top_n: topN });
-  if (userId) {
-    params.set("user_id", userId);
-  }
-  return request(`/recommend?${params}`);
+export function recommend(payload) {
+  return request("/recommend", { method: "POST", body: payload });
 }
 
 export function register({ username, name, password }) {
