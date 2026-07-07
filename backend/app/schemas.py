@@ -92,6 +92,10 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
+class LikeRequest(BaseModel):
+    movie_id: int
+
+
 class Person(BaseModel):
     kind: str
     id: int

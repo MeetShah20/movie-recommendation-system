@@ -57,6 +57,15 @@ class Friendship(Base):
     friend_id = Column(Integer, nullable=False)
 
 
+class Like(Base):
+    __tablename__ = "likes"
+    __table_args__ = (UniqueConstraint("user_id", "movie_id", name="uq_like"),)
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    movie_id = Column(Integer, nullable=False, index=True)
+
+
 def init_db():
     """Create the tables if they do not exist yet."""
     Base.metadata.create_all(engine)
