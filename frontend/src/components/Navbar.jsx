@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
+import { useAuth } from "../auth/AuthContext.jsx";
 
 const links = [
   { to: "/", label: "Home", end: true },
@@ -8,6 +10,14 @@ const links = [
 ];
 
 export default function Navbar() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  function logout() {
+    signOut();
+    navigate("/");
+  }
+
   return (
     <header className="navbar">
       <span className="brand">Movie Recommender</span>
@@ -23,6 +33,20 @@ export default function Navbar() {
           </NavLink>
         ))}
       </nav>
+      <div className="nav-account">
+        {user ? (
+          <>
+            <span className="nav-user">{user.name}</span>
+            <button className="nav-logout" type="button" onClick={logout}>
+              Log out
+            </button>
+          </>
+        ) : (
+          <NavLink to="/login" className="nav-link">
+            Sign in
+          </NavLink>
+        )}
+      </div>
     </header>
   );
 }

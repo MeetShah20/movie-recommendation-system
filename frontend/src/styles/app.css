@@ -57,6 +57,34 @@ body {
   font-weight: 600;
 }
 
+.nav-account {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.nav-user {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.nav-logout {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.nav-logout:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .content {
   max-width: 960px;
   margin: 0 auto;
