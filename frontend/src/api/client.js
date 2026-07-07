@@ -68,3 +68,16 @@ export function fetchHome() {
 export function fetchMovie(id) {
   return request(`/movies/${id}`);
 }
+
+export function fetchFriends() {
+  return request("/friends");
+}
+
+export function fetchPeople(search = "") {
+  const params = new URLSearchParams({ search });
+  return request(`/people?${params}`);
+}
+
+export function addFriend({ kind, id }) {
+  return request("/friends", { method: "POST", body: { kind, id } });
+}
