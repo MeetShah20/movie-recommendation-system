@@ -33,6 +33,7 @@ export default function Recommend() {
   const [searchParams] = useSearchParams();
   const seedMovie = searchParams.get("movie");
 
+  const [text, setText] = useState("");
   const [genres, setGenres] = useState([]);
   const [cast, setCast] = useState("");
   const [director, setDirector] = useState("");
@@ -73,6 +74,7 @@ export default function Recommend() {
     setError(null);
     try {
       const payload = {
+        text: text.trim(),
         genres,
         cast: cast.trim(),
         director: director.trim(),
@@ -105,6 +107,17 @@ export default function Recommend() {
     <section className="page">
       <h1>Find something to watch</h1>
       <form className="form recommend-form" onSubmit={submit}>
+        <div className="field">
+          <label htmlFor="mood">Describe what you're in the mood for</label>
+          <textarea
+            id="mood"
+            className="mood-box"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="a heartwarming space adventure with a strong friendship"
+            rows={2}
+          />
+        </div>
         <div className="field">
           <label>Genres</label>
           <div className="chips">
