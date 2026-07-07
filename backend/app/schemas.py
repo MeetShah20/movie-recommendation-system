@@ -26,6 +26,26 @@ class RecommendResponse(BaseModel):
     recommendations: list[Recommendation]
 
 
+class RecommendRequest(BaseModel):
+    movie_id: int | None = None
+    text: str = ""
+    genres: list[str] = []
+    cast: str = ""
+    director: str = ""
+    min_rating: float = 0.0
+    people: list[int] = []
+    top_n: int = 12
+
+
+class ReasonedMovie(MovieSummary):
+    score: float
+    reasons: list[str]
+
+
+class ReasonedResponse(BaseModel):
+    results: list[ReasonedMovie]
+
+
 class MovieDetail(BaseModel):
     id: int
     title: str
