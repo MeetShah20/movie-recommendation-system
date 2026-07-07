@@ -1,1 +1,4 @@
 *.sh text eol=lf
+*.npy binary
+*.npz binary
+*.pkl binary

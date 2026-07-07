@@ -11,9 +11,8 @@ env/
 *.egg-info/
 .pytest_cache/
 
-# Data and generated artifacts
+# Raw dataset (Kaggle source) and the local database
 backend/data/
-backend/precomputed/
 *.db
 
 # Node
