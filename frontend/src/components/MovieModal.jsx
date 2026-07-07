@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { fetchMovie } from "../api/client.js";
+import LikeButton from "./LikeButton.jsx";
 
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w342";
 
@@ -91,6 +92,7 @@ export default function MovieModal({ movieId, onClose }) {
                 </p>
               )}
               <div className="modal-actions">
+                <LikeButton movieId={movie.id} className="modal-like" />
                 <button className="submit" type="button" onClick={recommendFromHere}>
                   Recommend similar
                 </button>

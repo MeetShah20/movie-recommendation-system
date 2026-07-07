@@ -77,3 +77,15 @@ export function fetchPeople(search = "") {
 export function addFriend({ kind, id }) {
   return request("/friends", { method: "POST", body: { kind, id } });
 }
+
+export function fetchLikes() {
+  return request("/likes");
+}
+
+export function likeMovie(movieId) {
+  return request("/likes", { method: "POST", body: { movie_id: movieId } });
+}
+
+export function unlikeMovie(movieId) {
+  return request(`/likes/${movieId}`, { method: "DELETE" });
+}
