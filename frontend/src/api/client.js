@@ -64,3 +64,7 @@ export function fetchMe() {
 export function fetchHome() {
   return request("/home");
 }
+
+export function fetchMovie(id) {
+  return request(`/movies/${id}`);
+}

@@ -112,6 +112,134 @@ body {
   text-decoration: none;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 20;
+}
+
+.modal {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.8rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.modal-body {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.modal-poster {
+  flex: 0 0 200px;
+  width: 200px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.modal-poster-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  padding: 1rem;
+  box-sizing: border-box;
+  text-align: center;
+  background: linear-gradient(160deg, #1e1e1e 0%, #101010 100%);
+  border-top: 3px solid var(--accent);
+  font-weight: 600;
+}
+
+.modal-info h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.5rem;
+}
+
+.modal-tagline {
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 0.6rem;
+}
+
+.modal-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+}
+
+.modal-rating {
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 0.9rem;
+}
+
+.modal-rating span {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.85rem;
+}
+
+.modal-overview {
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.modal-credit {
+  font-size: 0.9rem;
+  margin: 0 0 0.4rem;
+}
+
+.modal-credit span {
+  color: var(--muted);
+  margin-right: 0.4rem;
+}
+
+.modal-imdb {
+  display: inline-block;
+  margin-top: 0.8rem;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 560px) {
+  .modal-body {
+    flex-direction: column;
+  }
+
+  .modal-poster {
+    width: 100%;
+    flex-basis: auto;
+  }
+}
+
 .carousel {
   margin-bottom: 2rem;
 }
