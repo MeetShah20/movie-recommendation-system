@@ -112,6 +112,59 @@ body {
   text-decoration: none;
 }
 
+.carousel {
+  margin-bottom: 2rem;
+}
+
+.carousel-title {
+  font-size: 1.15rem;
+  margin: 0 0 0.75rem;
+}
+
+.carousel-body {
+  position: relative;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 0;
+  bottom: 0.5rem;
+  width: 2.5rem;
+  border: none;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--text);
+  font-size: 1.6rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 2;
+}
+
+.carousel-body:hover .carousel-arrow {
+  opacity: 1;
+}
+
+.carousel-arrow.left {
+  left: 0;
+}
+
+.carousel-arrow.right {
+  right: 0;
+}
+
 .poster-card {
   flex: 0 0 auto;
   width: 150px;
