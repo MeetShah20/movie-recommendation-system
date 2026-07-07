@@ -1,9 +1,37 @@
 const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const TOKEN_KEY = "auth_token";
 
-async function request(path) {
-  const response = await fetch(`${BASE_URL}${path}`);
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token) {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+async function request(path, { method = "GET", body } = {}) {
+  const headers = {};
+  const token = getToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  if (body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
   if (!response.ok) {
     throw new Error(`request failed with status ${response.status}`);
+  }
+  if (response.status === 204) {
+    return null;
   }
   return response.json();
 }
@@ -19,4 +47,16 @@ export function fetchRecommendations({ movieId, userId, topN = 10 }) {
     params.set("user_id", userId);
   }
   return request(`/recommend?${params}`);
+}
+
+export function register({ username, name, password }) {
+  return request("/register", { method: "POST", body: { username, name, password } });
+}
+
+export function login({ username, password }) {
+  return request("/login", { method: "POST", body: { username, password } });
+}
+
+export function fetchMe() {
+  return request("/me");
 }

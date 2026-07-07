@@ -2,7 +2,9 @@ import { Route, Routes } from "react-router-dom";
 
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
 import Recommend from "./pages/Recommend.jsx";
+import Register from "./pages/Register.jsx";
 import Search from "./pages/Search.jsx";
 import Settings from "./pages/Settings.jsx";
 
@@ -16,6 +18,8 @@ export default function App() {
           <Route path="/recommend" element={<Recommend />} />
           <Route path="/search" element={<Search />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
     </div>

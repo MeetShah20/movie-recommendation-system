@@ -68,6 +68,22 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.auth-page {
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.auth-switch {
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.auth-switch a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
 .form {
   background: var(--surface);
   border: 1px solid var(--border);
