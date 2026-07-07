@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.config import HYBRID_ALPHA
-from app.db import Movie, Profile, get_db
+from app.db import Friendship, Like, Movie, Profile, User, get_db
+from app.dependencies import get_optional_user
 from app.models_store import get_models
 from app.recommend_engine import recommend as recommend_v2
 from app.schemas import (
@@ -48,13 +49,43 @@ def recommend_movies(
     )
 
 
+def _friend_likes(db, user):
+    """Collect movies liked by the user's user-kind friends, keyed by movie with liker names."""
+    friend_ids = [
+        row.friend_id
+        for row in db.query(Friendship).filter_by(owner_id=user.id, friend_kind="user").all()
+    ]
+    if not friend_ids:
+        return {}
+    rows = (
+        db.query(Like.movie_id, User.name)
+        .join(User, User.id == Like.user_id)
+        .filter(Like.user_id.in_(friend_ids))
+        .all()
+    )
+    likes = {}
+    for movie_id, name in rows:
+        likes.setdefault(movie_id, []).append(name)
+    return likes
+
+
 @router.post("/recommend", response_model=ReasonedResponse)
-def recommend_from_inputs(payload: RecommendRequest, db: Session = Depends(get_db)):
+def recommend_from_inputs(
+    payload: RecommendRequest,
+    db: Session = Depends(get_db),
+    user: User | None = Depends(get_optional_user),
+):
     """Rank movies from any mix of inputs and tag each with why it was picked."""
     friends = {}
     if payload.people:
         for profile in db.query(Profile).filter(Profile.id.in_(payload.people)).all():
             friends[profile.movielens_id] = profile.name
+
+    liked_ids = []
+    friend_likes = {}
+    if user is not None:
+        liked_ids = [row.movie_id for row in db.query(Like).filter_by(user_id=user.id).all()]
+        friend_likes = _friend_likes(db, user)
 
     content, collab = get_models()
     ranked = recommend_v2(
@@ -68,6 +99,8 @@ def recommend_from_inputs(payload: RecommendRequest, db: Session = Depends(get_d
         director=payload.director,
         min_rating=payload.min_rating,
         friends=friends,
+        liked_ids=liked_ids,
+        friend_likes=friend_likes,
         top_n=payload.top_n,
     )
 

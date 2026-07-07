@@ -24,3 +24,16 @@ def get_current_user(
     if user is None:
         raise HTTPException(status_code=401, detail="user not found")
     return user
+
+
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer),
+    db: Session = Depends(get_db),
+):
+    """Resolve the signed-in user if a valid token is present, else return None."""
+    if credentials is None:
+        return None
+    user_id = decode_token(credentials.credentials)
+    if user_id is None:
+        return None
+    return db.get(User, user_id)

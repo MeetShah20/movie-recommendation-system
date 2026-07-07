@@ -81,6 +81,25 @@ def _from_friends(pool, collab, col_to_movie, friends, per_friend=30):
         _add(pool, movie_id, "friends", strength, _friends_reason(names))
 
 
+def _from_liked(pool, db, content, movie_id):
+    """Add movies similar to one the user liked."""
+    seed = db.get(Movie, movie_id)
+    if seed is None:
+        return
+    neighbours = similar_movies(
+        movie_id, content["matrix"], content["id_to_row"], content["row_to_id"], top_n=POOL_SIZE
+    )
+    for candidate_id, score in neighbours:
+        _add(pool, candidate_id, "liked", score, f"Because you liked {seed.title}")
+
+
+def _from_friend_likes(pool, friend_likes):
+    """Add movies a friend liked, naming who liked each one."""
+    for movie_id, names in friend_likes.items():
+        strength = len(names) + 0.0005
+        _add(pool, movie_id, "friends", strength, _friends_reason(names))
+
+
 def _from_also_watched(pool, db, collab, col_to_movie, movie_id):
     seed = db.get(Movie, movie_id)
     if seed is None:
@@ -92,9 +111,10 @@ def _from_also_watched(pool, db, collab, col_to_movie, movie_id):
         _add(pool, candidate_id, "watched", score, f"People who watched {seed.title} also watched this")
 
 
-def _rank(pool, db, min_rating, top_n):
+def _rank(pool, db, min_rating, top_n, exclude=None):
     if not pool:
         return []
+    exclude = exclude or set()
     signals = {signal for entry in pool.values() for signal in entry["signals"]}
     maxima = {
         signal: max((entry["signals"].get(signal, 0.0) for entry in pool.values()), default=1.0) or 1.0
@@ -103,6 +123,8 @@ def _rank(pool, db, min_rating, top_n):
     ratings = dict(db.query(Movie.id, Movie.vote_average).filter(Movie.id.in_(pool.keys())).all())
     ranked = []
     for movie_id, entry in pool.items():
+        if movie_id in exclude:
+            continue
         if min_rating and (ratings.get(movie_id) or 0.0) < min_rating:
             continue
         score = sum(value / maxima[signal] for signal, value in entry["signals"].items())
@@ -111,7 +133,7 @@ def _rank(pool, db, min_rating, top_n):
     return ranked[:top_n]
 
 
-def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, friends=None, top_n=12):
+def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast="", director="", min_rating=0.0, friends=None, liked_ids=None, friend_likes=None, top_n=12):
     """Build a ranked, reason-tagged recommendation list from any mix of inputs."""
     pool = {}
     col_to_movie = {position: movie_id_ for movie_id_, position in collab["movie_to_col"].items()}
@@ -128,4 +150,8 @@ def recommend(db, content, collab, *, movie_id=None, text="", genres=None, cast=
         _from_column(pool, db, Movie.director, director, "director", f"Directed by {director}")
     if friends:
         _from_friends(pool, collab, col_to_movie, friends)
-    return _rank(pool, db, min_rating, top_n)
+    for liked_id in liked_ids or []:
+        _from_liked(pool, db, content, liked_id)
+    if friend_likes:
+        _from_friend_likes(pool, friend_likes)
+    return _rank(pool, db, min_rating, top_n, exclude=set(liked_ids or []))
