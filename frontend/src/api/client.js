@@ -60,3 +60,7 @@ export function login({ username, password }) {
 export function fetchMe() {
   return request("/me");
 }
+
+export function fetchHome() {
+  return request("/home");
+}
