@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function FriendsSidebar({ signedIn, friends, loading }) {
+export default function FriendsSidebar({ signedIn, friends, loading, onRemove }) {
   if (!signedIn) {
     return (
       <aside className="sidebar">
@@ -21,7 +21,17 @@ export default function FriendsSidebar({ signedIn, friends, loading }) {
         {friends.map((friend) => (
           <li key={`${friend.kind}-${friend.id}`} className="friend">
             <span className="friend-name">{friend.name}</span>
-            <span className="friend-kind">{friend.kind === "profile" ? "Viewer" : "Member"}</span>
+            <span className="friend-meta">
+              <span className="friend-kind">{friend.kind === "profile" ? "Viewer" : "Member"}</span>
+              <button
+                className="friend-remove"
+                type="button"
+                aria-label={`Remove ${friend.name}`}
+                onClick={() => onRemove(friend)}
+              >
+                ×
+              </button>
+            </span>
           </li>
         ))}
       </ul>

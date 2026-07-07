@@ -78,6 +78,10 @@ export function addFriend({ kind, id }) {
   return request("/friends", { method: "POST", body: { kind, id } });
 }
 
+export function removeFriend({ kind, id }) {
+  return request(`/friends/${kind}/${id}`, { method: "DELETE" });
+}
+
 export function fetchLikes() {
   return request("/likes");
 }
