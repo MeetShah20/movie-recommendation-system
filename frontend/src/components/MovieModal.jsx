@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { fetchMovie } from "../api/client.js";
 import LikeButton from "./LikeButton.jsx";
+import WatchButton from "./WatchButton.jsx";
 
 const IMAGE_BASE = "https://image.tmdb.org/t/p/w342";
 
@@ -93,6 +94,7 @@ export default function MovieModal({ movieId, onClose }) {
               )}
               <div className="modal-actions">
                 <LikeButton movieId={movie.id} className="modal-like" />
+                <WatchButton movieId={movie.id} />
                 <button className="submit" type="button" onClick={recommendFromHere}>
                   Recommend similar
                 </button>

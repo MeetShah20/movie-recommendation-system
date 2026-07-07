@@ -2,11 +2,10 @@ import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../auth/AuthContext.jsx";
 
-const links = [
+const baseLinks = [
   { to: "/", label: "Home", end: true },
   { to: "/recommend", label: "Recommend" },
   { to: "/search", label: "Search" },
-  { to: "/settings", label: "Settings" },
 ];
 
 export default function Navbar() {
@@ -17,6 +16,10 @@ export default function Navbar() {
     signOut();
     navigate("/");
   }
+
+  const links = user
+    ? [...baseLinks, { to: "/watchlist", label: "Watchlist" }, { to: "/settings", label: "Settings" }]
+    : [...baseLinks, { to: "/settings", label: "Settings" }];
 
   return (
     <header className="navbar">

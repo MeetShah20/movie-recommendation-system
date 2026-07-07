@@ -89,3 +89,15 @@ export function likeMovie(movieId) {
 export function unlikeMovie(movieId) {
   return request(`/likes/${movieId}`, { method: "DELETE" });
 }
+
+export function fetchWatchlist() {
+  return request("/watchlist");
+}
+
+export function addToWatchlist(movieId) {
+  return request("/watchlist", { method: "POST", body: { movie_id: movieId } });
+}
+
+export function removeFromWatchlist(movieId) {
+  return request(`/watchlist/${movieId}`, { method: "DELETE" });
+}
