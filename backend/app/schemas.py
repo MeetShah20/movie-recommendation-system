@@ -96,6 +96,10 @@ class LikeRequest(BaseModel):
     movie_id: int
 
 
+class WatchlistRequest(BaseModel):
+    movie_id: int
+
+
 class Person(BaseModel):
     kind: str
     id: int

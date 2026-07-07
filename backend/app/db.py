@@ -66,6 +66,15 @@ class Like(Base):
     movie_id = Column(Integer, nullable=False, index=True)
 
 
+class Watchlist(Base):
+    __tablename__ = "watchlist"
+    __table_args__ = (UniqueConstraint("user_id", "movie_id", name="uq_watchlist"),)
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    movie_id = Column(Integer, nullable=False, index=True)
+
+
 def init_db():
     """Create the tables if they do not exist yet."""
     Base.metadata.create_all(engine)
