@@ -1,26 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { fetchFriends } from "../api/client.js";
-import { useAuth } from "../auth/AuthContext.jsx";
-
-export default function FriendsSidebar() {
-  const { user } = useAuth();
-  const [friends, setFriends] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    fetchFriends()
-      .then(setFriends)
-      .catch(() => setFriends([]))
-      .finally(() => setLoading(false));
-  }, [user]);
-
-  if (!user) {
+export default function FriendsSidebar({ signedIn, friends, loading }) {
+  if (!signedIn) {
     return (
       <aside className="sidebar">
         <h2 className="sidebar-title">Friends</h2>

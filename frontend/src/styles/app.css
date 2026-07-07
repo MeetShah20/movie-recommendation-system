@@ -145,6 +145,81 @@ body {
   letter-spacing: 0.03em;
 }
 
+.people {
+  flex: 1 1 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.people-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.6rem 0.7rem;
+  background: #0f0f0f;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.people-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.people-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.person {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.person:last-child {
+  border-bottom: none;
+}
+
+.person-name {
+  font-size: 0.95rem;
+}
+
+.person-add {
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.person-add:disabled {
+  background: #3a3a3a;
+  color: var(--muted);
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .settings-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    flex-basis: auto;
+    width: 100%;
+  }
+}
+
 .auth-page {
   max-width: 380px;
   margin: 0 auto;
