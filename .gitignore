@@ -24,6 +24,9 @@ dist/
 .env
 *.env
 
+# Word files kept out of the repo
+*.docx
+
 # Editor and OS
 .vscode/
 .idea/
