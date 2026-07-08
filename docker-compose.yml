@@ -1,0 +1,33 @@
+services:
+  backend:
+    build: ./backend
+    image: movie-backend
+    environment:
+      DATABASE_URL: sqlite:////app/db/movies.db
+      ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    volumes:
+      - db-data:/app/db
+    ports:
+      - "8000:8000"
+    networks:
+      - app-net
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    image: movie-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - app-net
+
+volumes:
+  db-data:
+
+networks:
+  app-net:
+    driver: bridge
